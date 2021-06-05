@@ -293,7 +293,9 @@ func (b *Bwhatsapp) Send(msg config.Message) (string, error) {
 	if msg.ID != "" {
 		b.Log.Debugf("updating message with id %s", msg.ID)
 
-		msg.Text += " (edited)"
+		if !strings.HasSuffix(msg.Text, b.GetString("EditSuffix")) {		
+			msg.Text += b.GetString("EditSuffix")
+		}
 	}
 
 	// Handle Upload a file
