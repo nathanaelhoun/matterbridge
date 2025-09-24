@@ -13,7 +13,7 @@ import (
 )
 
 func (cli *Client) handleCallEvent(node *waBinary.Node) {
-	go cli.sendAck(node)
+	defer cli.maybeDeferredAck(cli.BackgroundEventCtx, node)()
 
 	if len(node.GetChildren()) != 1 {
 		cli.dispatchEvent(&events.UnknownCallEvent{Node: node})
@@ -27,6 +27,13 @@ func (cli *Client) handleCallEvent(node *waBinary.Node) {
 		Timestamp:   ag.UnixTime("t"),
 		CallCreator: cag.JID("call-creator"),
 		CallID:      cag.String("call-id"),
+		GroupJID:    cag.OptionalJIDOrEmpty("group-jid"),
+	}
+	if basicMeta.CallCreator.Server == types.HiddenUserServer {
+		basicMeta.CallCreatorAlt = cag.OptionalJIDOrEmpty("caller_pn")
+	} else {
+		// This may not actually exist
+		basicMeta.CallCreatorAlt = cag.OptionalJIDOrEmpty("caller_lid")
 	}
 	switch child.Tag {
 	case "offer":
@@ -83,7 +90,30 @@ func (cli *Client) handleCallEvent(node *waBinary.Node) {
 			Reason:        cag.String("reason"),
 			Data:          &child,
 		})
+	case "reject":
+		cli.dispatchEvent(&events.CallReject{
+			BasicCallMeta: basicMeta,
+			Data:          &child,
+		})
 	default:
 		cli.dispatchEvent(&events.UnknownCallEvent{Node: node})
 	}
+}
+
+// RejectCall reject an incoming call.
+func (cli *Client) RejectCall(callFrom types.JID, callID string) error {
+	ownID := cli.getOwnID()
+	if ownID.IsEmpty() {
+		return ErrNotLoggedIn
+	}
+	ownID, callFrom = ownID.ToNonAD(), callFrom.ToNonAD()
+	return cli.sendNode(waBinary.Node{
+		Tag:   "call",
+		Attrs: waBinary.Attrs{"id": cli.GenerateMessageID(), "from": ownID, "to": callFrom},
+		Content: []waBinary.Node{{
+			Tag:     "reject",
+			Attrs:   waBinary.Attrs{"call-id": callID, "call-creator": callFrom, "count": "0"},
+			Content: nil,
+		}},
+	})
 }
