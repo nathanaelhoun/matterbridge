@@ -1,0 +1,37 @@
+FROM golang:1.24-alpine AS builder
+
+# Install required packages
+RUN apk --no-cache add git
+
+# Set environment variables
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+# Clone the specific branch from redbullpeter's fork
+WORKDIR /go/src
+RUN git clone --depth 1 --branch claude/integrate-whatsmeow-updates-011CUrxG4Yn1RABuSVSa1E1g \
+    https://github.com/redbullpeter/matterbridge.git matterbridge
+
+# Build Matterbridge with whatsappmulti tag
+# Note: Removed -mod vendor to allow fresh dependency download
+WORKDIR /go/src/matterbridge
+RUN go build -tags whatsappmulti \
+    -ldflags "-X github.com/42wim/matterbridge/version.GitHash=$(git rev-parse --short HEAD)" \
+    -o /bin/matterbridge
+
+FROM alpine:latest
+
+# Install necessary certificates and mailcap
+RUN apk --no-cache add ca-certificates mailcap
+
+# Copy the built binary from the builder stage
+COPY --from=builder /bin/matterbridge /bin/matterbridge
+
+# Set up configuration directory
+RUN mkdir /etc/matterbridge \
+  && touch /etc/matterbridge/matterbridge.toml \
+  && ln -sf /matterbridge.toml /etc/matterbridge/matterbridge.toml
+
+# Set the entrypoint
+ENTRYPOINT ["/bin/matterbridge", "-conf", "/etc/matterbridge/matterbridge.toml"]
