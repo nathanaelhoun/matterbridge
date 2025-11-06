@@ -457,6 +457,8 @@ go.mau.fi/whatsmeow v0.0.0-20240821142752-3d63c6fcc1a7 h1:Aa4uov0rM0SQQ7Fc/TZZpm
 go.mau.fi/whatsmeow v0.0.0-20240821142752-3d63c6fcc1a7/go.mod h1:BhHKalSq0qNtSCuGIUIvoJyU5KbT4a7k8DQ5yw1Ssk4=
 go.mau.fi/whatsmeow v0.0.0-20251028165006-ad7a618ba42f h1:UfzKgeEBRlDj3E2B/z+no17BstkAxO4kIUNSgR6Cwrw=
 go.mau.fi/whatsmeow v0.0.0-20251028165006-ad7a618ba42f/go.mod h1:RwBrMQAWCHGzMdDZ6EwjcY4Aj3g8Efx8c7GACTdiAME=
+go.mau.fi/whatsmeow v0.0.0-20251106163046-720bd0b4a715 h1:JxVirSDFmhhDEv3LmXW8ybwHAKV51Izz3burUg81w2o=
+go.mau.fi/whatsmeow v0.0.0-20251106163046-720bd0b4a715/go.mod h1:RwBrMQAWCHGzMdDZ6EwjcY4Aj3g8Efx8c7GACTdiAME=
 go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
 go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
