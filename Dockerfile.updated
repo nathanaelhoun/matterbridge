@@ -14,9 +14,9 @@ RUN git clone --depth 1 --branch claude/integrate-whatsmeow-updates-011CUrxG4Yn1
     https://github.com/redbullpeter/matterbridge.git matterbridge
 
 # Build Matterbridge with whatsappmulti tag
-# Note: Removed -mod vendor to allow fresh dependency download
+# Use -mod=mod to ignore outdated vendor directory and download fresh dependencies
 WORKDIR /go/src/matterbridge
-RUN go build -tags whatsappmulti \
+RUN go build -mod=mod -tags whatsappmulti \
     -ldflags "-X github.com/42wim/matterbridge/version.GitHash=$(git rev-parse --short HEAD)" \
     -o /bin/matterbridge
 
