@@ -121,7 +121,7 @@ func (b *Bwhatsapp) getSenderNotify(senderJid types.JID) string {
 func (b *Bwhatsapp) GetProfilePicThumb(jid string) (*types.ProfilePictureInfo, error) {
 	pjid, _ := types.ParseJID(jid)
 
-	info, err := b.wc.GetProfilePictureInfo(pjid, &whatsmeow.GetProfilePictureParams{
+	info, err := b.wc.GetProfilePictureInfo(context.Background(), pjid, &whatsmeow.GetProfilePictureParams{
 		Preview: true,
 	})
 	if err != nil {
@@ -135,6 +135,10 @@ func isGroupJid(identifier string) bool {
 	return strings.HasSuffix(identifier, "@g.us") ||
 		strings.HasSuffix(identifier, "@temp") ||
 		strings.HasSuffix(identifier, "@broadcast")
+}
+
+func isPrivateJid(identifier string) bool {
+	return strings.HasSuffix(identifier, "@s.whatsapp.net")
 }
 
 func (b *Bwhatsapp) getDevice() (*store.Device, error) {
